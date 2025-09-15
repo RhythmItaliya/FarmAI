@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { loginUser, clearError } from '../store/slices/authSlice';
+import { ErrorHandler } from '../utils/errorHandler';
 import {
   COLORS,
   FONT_FAMILY,
@@ -34,7 +37,31 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const { isLoading, error, isAuthenticated } = useAppSelector(
+    state => state.auth
+  );
+
+  // Clear error when component mounts
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  // Navigate to home when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.navigate('Home');
+    }
+  }, [isAuthenticated, navigation]);
+
+  // Show error alert when there's an error
+  useEffect(() => {
+    if (error) {
+      ErrorHandler.showAlert({ message: error });
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -42,14 +69,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       return;
     }
 
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert('Success', 'Login successful!');
-      // Navigate to main app
-      navigation.navigate('Home');
-    }, 1500);
+    try {
+      const result = await dispatch(
+        loginUser({ usernameOrEmail: email, password })
+      ).unwrap();
+
+      // If user requires verification, navigate to OTP screen
+      if (result.requiresVerification) {
+        navigation.navigate('OTPVerification', {
+          email: result.user.email,
+          username: result.user.username,
+        });
+      }
+    } catch (error) {
+      // Error is handled by useEffect above
+      ErrorHandler.logError(error, 'LoginScreen');
+    }
   };
 
   const handleRegister = () => {
@@ -66,11 +101,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           GLOBAL.flexGrow,
           GLOBAL.justifyCenter,
           PADDING.horizontalMd,
+          PADDING.verticalLg,
         ]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={[GLOBAL.alignCenter, MARGIN.bottom(24)]}>
-          <Text style={[TYPOGRAPHY.heading, MARGIN.bottom(8)]}>
+        <View style={[GLOBAL.alignCenter, MARGIN.bottom(32)]}>
+          <Text style={[TYPOGRAPHY.heading, MARGIN.bottom(12)]}>
             Welcome Back
           </Text>
           <Text
@@ -78,16 +115,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               TYPOGRAPHY.body,
               TEXT_ALIGN.center,
               { color: COLORS.textSecondary },
+              MARGIN.horizontal(16),
             ]}
           >
             Sign in to your account
           </Text>
         </View>
 
-        <View style={[CARD.base, MARGIN.bottom(24)]}>
-          <View style={MARGIN.bottom(16)}>
-            <Text style={[TYPOGRAPHY.bodyBold, MARGIN.bottom(8)]}>
-              Email Address
+        <View style={[CARD.base, MARGIN.bottom(32)]}>
+          <View style={MARGIN.bottom(20)}>
+            <Text style={[TYPOGRAPHY.bodyBold, MARGIN.bottom(10)]}>
+              Username or Email
             </Text>
             <TextInput
               style={[
@@ -96,26 +134,25 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                   borderColor: COLORS.border,
                   borderRadius: RADIUS.md,
                   paddingHorizontal: SPACING.md,
-                  paddingVertical: SPACING.sm,
+                  paddingVertical: SPACING.md,
                   fontFamily: FONT_FAMILY.regular,
                   fontSize: 16,
                   color: COLORS.text,
                   backgroundColor: COLORS.surface,
+                  minHeight: 48,
                 },
-                MARGIN.bottom(16),
               ]}
-              placeholder="Enter your email"
+              placeholder="Enter username or email"
               placeholderTextColor={COLORS.gray}
               value={email}
               onChangeText={setEmail}
-              keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
             />
           </View>
 
           <View style={MARGIN.bottom(24)}>
-            <Text style={[TYPOGRAPHY.bodyBold, MARGIN.bottom(8)]}>
+            <Text style={[TYPOGRAPHY.bodyBold, MARGIN.bottom(10)]}>
               Password
             </Text>
             <TextInput
@@ -125,11 +162,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                   borderColor: COLORS.border,
                   borderRadius: RADIUS.md,
                   paddingHorizontal: SPACING.md,
-                  paddingVertical: SPACING.sm,
+                  paddingVertical: SPACING.md,
                   fontFamily: FONT_FAMILY.regular,
                   fontSize: 16,
                   color: COLORS.text,
                   backgroundColor: COLORS.surface,
+                  minHeight: 48,
                 },
               ]}
               placeholder="Enter your password"
@@ -143,7 +181,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           </View>
 
           <TouchableOpacity
-            style={[BUTTON.base, MARGIN.bottom(16), isLoading && DISABLED.view]}
+            style={[BUTTON.base, MARGIN.bottom(20), isLoading && DISABLED.view]}
             onPress={handleLogin}
             disabled={isLoading}
           >
@@ -151,23 +189,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               {isLoading ? 'Signing In...' : 'Sign In'}
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={[GLOBAL.alignCenter, MARGIN.bottom(16)]}>
-            <Text style={[TYPOGRAPHY.body, { color: COLORS.primary }]}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
         </View>
 
-        <View style={[GLOBAL.alignCenter, MARGIN.top(16)]}>
-          <Text style={[TYPOGRAPHY.body, { color: COLORS.textSecondary }]}>
-            Don't have an account?{' '}
-          </Text>
-          <TouchableOpacity onPress={handleRegister}>
-            <Text style={[TYPOGRAPHY.bodyBold, { color: COLORS.primary }]}>
-              Sign Up
+        <View style={[GLOBAL.alignCenter, MARGIN.top(8)]}>
+          <View style={[GLOBAL.flexRow, GLOBAL.alignCenter]}>
+            <Text style={[TYPOGRAPHY.body, { color: COLORS.textSecondary }]}>
+              Don't have an account?{' '}
             </Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={handleRegister}>
+              <Text style={[TYPOGRAPHY.bodyBold, { color: COLORS.primary }]}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

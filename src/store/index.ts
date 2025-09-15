@@ -1,31 +1,35 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import authReducer from './slices/authSlice';
 
-// Dummy reducer to avoid empty combineReducers warning
-const dummyReducer = (state = {}, action: any) => state;
-
+// Root reducer
 const rootReducer = combineReducers({
-  dummy: dummyReducer,
+  auth: authReducer,
 });
 
+// Persist config
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: [],
+  whitelist: ['auth'], // Only persist auth state
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+// Configure store
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: false,
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
     }),
 });
 
 export const persistor = persistStore(store);
 
+// Types
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

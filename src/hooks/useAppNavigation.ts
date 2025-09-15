@@ -38,7 +38,7 @@ export const useAppNavigation = () => {
    */
   const push = useCallback(
     (name: string, params?: object) => navigation.push(name, params),
-    [navigation],
+    [navigation]
   );
 
   /**
@@ -49,7 +49,7 @@ export const useAppNavigation = () => {
    */
   const navigate = useCallback(
     (name: string, params?: object) => navigation.navigate(name, params),
-    [navigation],
+    [navigation]
   );
 
   return useMemo(
@@ -59,6 +59,6 @@ export const useAppNavigation = () => {
       navigate,
       navigation, // expose the full navigation object if needed
     }),
-    [goBack, push, navigate, navigation],
+    [goBack, push, navigate, navigation]
   );
 };

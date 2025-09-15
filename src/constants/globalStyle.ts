@@ -22,30 +22,30 @@ import {
  * Usage: style={{ color: COLORS.primary }}
  */
 export const COLORS = {
-  primary: '#1E90FF', // Dodger Blue (sky, water)
-  secondary: '#FFB347', // Saffron (sun, warmth)
-  background: '#F4F9FB', // Light blue-gray (clean, airy)
+  primary: '#2E7D32', // Forest Green (main brand color)
+  secondary: '#8BC34A', // Light Green (accent color)
+  background: '#F1F8E9', // Light green-gray (clean, natural)
   surface: '#FFFFFF', // Card/modal backgrounds
-  text: '#22223B', // Deep navy (readable)
-  textSecondary: '#4A5568', // Muted blue-gray
-  error: '#E63946', // Coral red
-  warning: '#FFB703', // Amber
-  success: '#43AA8B', // Teal green
-  info: '#3A86FF', // Vivid blue
-  disabled: '#BFC9D1', // Muted gray
-  border: '#E0E6ED', // Soft border
+  text: '#1B5E20', // Dark green (readable)
+  textSecondary: '#4CAF50', // Medium green
+  error: '#D32F2F', // Red for errors
+  warning: '#FF9800', // Orange for warnings
+  success: '#4CAF50', // Green for success
+  info: '#2196F3', // Blue for info
+  disabled: '#C8E6C9', // Light green-gray
+  border: '#C8E6C9', // Soft green border
   card: '#FFFFFF', // Card backgrounds
-  gray: '#A0AEC0', // Neutral gray
-  lightGray: '#EDF2F7', // Very light gray
-  darkGray: '#2D3748', // Dark gray
+  gray: '#9E9E9E', // Neutral gray
+  lightGray: '#F5F5F5', // Very light gray
+  darkGray: '#424242', // Dark gray
 
   // Gradients (for react-native-linear-gradient)
-  primaryGradient: ['#1E90FF', '#43AA8B'], // Blue to teal
-  secondaryGradient: ['#FFB347', '#FFB703'], // Saffron to amber
-  successGradient: ['#43AA8B', '#B2F7EF'], // Teal to light teal
-  warningGradient: ['#FFB703', '#FFD166'], // Amber to light yellow
-  errorGradient: ['#E63946', '#FF758F'], // Coral to pink
-  infoGradient: ['#3A86FF', '#A0C4FF'], // Blue to light blue
+  primaryGradient: ['#2E7D32', '#4CAF50'], // Forest green to medium green
+  secondaryGradient: ['#8BC34A', '#CDDC39'], // Light green to lime
+  successGradient: ['#4CAF50', '#A5D6A7'], // Green to light green
+  warningGradient: ['#FF9800', '#FFB74D'], // Orange to light orange
+  errorGradient: ['#D32F2F', '#EF5350'], // Red to light red
+  infoGradient: ['#2196F3', '#64B5F6'], // Blue to light blue
 };
 
 /**

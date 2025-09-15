@@ -4,6 +4,9 @@ import { RootStackParamList, HomeStackParamList } from '@/types';
 
 const LoginScreen = React.lazy(() => import('../screens/LoginScreen'));
 const RegisterScreen = React.lazy(() => import('../screens/RegisterScreen'));
+const OTPVerificationScreen = React.lazy(
+  () => import('../screens/OTPVerificationScreen')
+);
 const HomeScreen = React.lazy(() => import('../screens/HomeScreen'));
 const HomeSubScreen = React.lazy(() => import('../screens/home/HomeSubScreen'));
 
@@ -29,6 +32,11 @@ const RootNavigator = React.memo(() => (
     <RootStack.Screen
       name="Register"
       component={RegisterScreen}
+      options={{ headerShown: false }}
+    />
+    <RootStack.Screen
+      name="OTPVerification"
+      component={OTPVerificationScreen}
       options={{ headerShown: false }}
     />
     <RootStack.Screen

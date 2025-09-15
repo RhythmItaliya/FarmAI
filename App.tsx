@@ -13,18 +13,20 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './src/store';
+import AuthInitializer from './src/components/AuthInitializer';
 
 enableScreens();
 
 const App = () => {
-
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <NavigationContainer>
-            <RootNavigator />
-          </NavigationContainer>
+          <AuthInitializer>
+            <NavigationContainer>
+              <RootNavigator />
+            </NavigationContainer>
+          </AuthInitializer>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>

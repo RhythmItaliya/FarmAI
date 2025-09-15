@@ -50,15 +50,18 @@ export type DeviceType =
   | 'foldable'
   | 'desktop';
 
-export const deviceType: DeviceType = useMemo(() => {
-  if (SCREEN_WIDTH < breakpoints.verySmall) return 'verySmall';
-  if (SCREEN_WIDTH < breakpoints.small) return 'small';
-  if (SCREEN_WIDTH < breakpoints.medium) return 'medium';
-  if (SCREEN_WIDTH < breakpoints.large) return 'large';
-  if (SCREEN_WIDTH < breakpoints.tablet) return 'tablet';
-  if (SCREEN_WIDTH < breakpoints.foldable) return 'foldable';
+// Helper function to determine device type based on width
+const getDeviceType = (width: number): DeviceType => {
+  if (width < breakpoints.verySmall) return 'verySmall';
+  if (width < breakpoints.small) return 'small';
+  if (width < breakpoints.medium) return 'medium';
+  if (width < breakpoints.large) return 'large';
+  if (width < breakpoints.tablet) return 'tablet';
+  if (width < breakpoints.foldable) return 'foldable';
   return 'desktop';
-}, [SCREEN_WIDTH]);
+};
+
+export const deviceType: DeviceType = getDeviceType(SCREEN_WIDTH);
 
 export type Orientation = 'portrait' | 'landscape';
 export const orientation: Orientation =
@@ -69,38 +72,22 @@ export const orientation: Orientation =
  */
 export function useResponsive() {
   const [dimensions, setDimensions] = useState<ScaledSize>(
-    Dimensions.get('window'),
+    Dimensions.get('window')
   );
   const [currentOrientation, setCurrentOrientation] = useState<Orientation>(
-    dimensions.width < dimensions.height ? 'portrait' : 'landscape',
+    dimensions.width < dimensions.height ? 'portrait' : 'landscape'
   );
-  const [currentDeviceType, setCurrentDeviceType] = useState<DeviceType>(() => {
-    if (dimensions.width < breakpoints.verySmall) return 'verySmall';
-    if (dimensions.width < breakpoints.small) return 'small';
-    if (dimensions.width < breakpoints.medium) return 'medium';
-    if (dimensions.width < breakpoints.large) return 'large';
-    if (dimensions.width < breakpoints.tablet) return 'tablet';
-    if (dimensions.width < breakpoints.foldable) return 'foldable';
-    return 'desktop';
-  });
+  const [currentDeviceType, setCurrentDeviceType] = useState<DeviceType>(() =>
+    getDeviceType(dimensions.width)
+  );
 
   useEffect(() => {
     const onChange = ({ window }: { window: ScaledSize }) => {
       setDimensions(window);
       setCurrentOrientation(
-        window.width < window.height ? 'portrait' : 'landscape',
+        window.width < window.height ? 'portrait' : 'landscape'
       );
-      if (window.width < breakpoints.verySmall)
-        setCurrentDeviceType('verySmall');
-      else if (window.width < breakpoints.small) setCurrentDeviceType('small');
-      else if (window.width < breakpoints.medium)
-        setCurrentDeviceType('medium');
-      else if (window.width < breakpoints.large) setCurrentDeviceType('large');
-      else if (window.width < breakpoints.tablet)
-        setCurrentDeviceType('tablet');
-      else if (window.width < breakpoints.foldable)
-        setCurrentDeviceType('foldable');
-      else setCurrentDeviceType('desktop');
+      setCurrentDeviceType(getDeviceType(window.width));
     };
     const sub = Dimensions.addEventListener('change', onChange);
     return () => {

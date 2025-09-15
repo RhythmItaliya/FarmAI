@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+android/
+ios/
+dist/
+build/
+
+# Generated files
+*.log
+*.lock
+
+# Metro
+.metro-health-check*
+
+# Environment files
+.env*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
