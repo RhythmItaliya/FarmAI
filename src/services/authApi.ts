@@ -4,7 +4,6 @@ import {
   setUserData,
   clearAuthData,
 } from '../config/api';
-import { ApiResponse } from '../config/api';
 
 // Auth API types (exactly matching server responses)
 export interface LoginRequest {
@@ -62,6 +61,7 @@ export interface RegisterResponse {
 
 // Server Verify OTP Response (exact match)
 export interface VerifyOTPResponse {
+  accessToken: string;
   message: string;
   email: string;
   otpVerifiedAt: string;
@@ -92,7 +92,7 @@ export const authApi = {
   // Login user
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     console.log('🔍 Login request data:', data);
-    
+
     const response = await apiCall<LoginResponse>({
       method: 'POST',
       url: '/auth/login',
@@ -104,18 +104,20 @@ export const authApi = {
     console.log('🔍 Response keys:', Object.keys(response || {}));
 
     // Store auth data if token exists
-    if (response.accessToken) {
+    if (response?.data?.accessToken) {
       console.log('🔍 Storing auth data with token');
       await setAuthData({
-        accessToken: response.accessToken,
+        accessToken: response.data.accessToken,
         refreshToken: '', // Your server doesn't use refresh tokens
       });
-      await setUserData(response.user);
-    } else {
-      console.log('🔍 No access token in response');
     }
 
-    return response;
+    // Always store latest user payload if provided
+    if (response?.data?.user) {
+      await setUserData(response.data.user);
+    }
+
+    return response.data;
   },
 
   // Register user
@@ -127,9 +129,11 @@ export const authApi = {
     });
 
     // Store user data (no token until OTP verification)
-    await setUserData(response.user);
+    if (response?.data?.user) {
+      await setUserData(response.data.user);
+    }
 
-    return response;
+    return response.data;
   },
 
   // Verify registration OTP
@@ -140,10 +144,20 @@ export const authApi = {
       data,
     });
 
-    // Update stored user data
-    await setUserData(response.user);
+    // Store auth data if access token is provided
+    if (response?.data?.accessToken) {
+      await setAuthData({
+        accessToken: response.data.accessToken,
+        refreshToken: '',
+      });
+    }
 
-    return response;
+    // Update stored user data
+    if (response?.data?.user) {
+      await setUserData(response.data.user);
+    }
+
+    return response.data;
   },
 
   // Resend registration OTP
@@ -154,7 +168,7 @@ export const authApi = {
       data,
     });
 
-    return response;
+    return response.data;
   },
 
   // Logout user (client-side only since server doesn't have logout endpoint)

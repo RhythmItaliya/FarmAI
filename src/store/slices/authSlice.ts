@@ -1,13 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import {
-  authApi,
-  LoginResponse,
-  RegisterResponse,
-  VerifyOTPResponse,
-} from '../../services/authApi';
-import { getUserData, clearAuthData } from '../../config/api';
+import { authApi } from '../../services/authApi';
+import { getUserData } from '../../config/api';
 
-// User state interface (matching server schema)
 export interface User {
   uuid: string;
   username: string;
@@ -18,7 +12,6 @@ export interface User {
   updatedAt: string;
 }
 
-// Auth state interface
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -28,7 +21,6 @@ export interface AuthState {
   requiresVerification: boolean;
 }
 
-// Initial state
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -166,14 +158,12 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log('🔍 Redux loginUser.fulfilled - action.payload:', action.payload);
-        console.log('🔍 Redux loginUser.fulfilled - action.payload type:', typeof action.payload);
-        
         state.isLoading = false;
-        state.user = action.payload?.user;
+        state.user = action.payload?.user || null;
         state.isAuthenticated = !!action.payload?.accessToken;
         state.requiresVerification =
-          action.payload?.requiresVerification || false;
+          !!action.payload?.requiresVerification ||
+          (!!action.payload?.user && action.payload.user.isActive === false);
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -190,7 +180,7 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
-        state.isAuthenticated = false; // Not authenticated until OTP verified
+        state.isAuthenticated = false;
         state.requiresVerification = true;
         state.error = null;
       })
@@ -208,7 +198,7 @@ const authSlice = createSlice({
       .addCase(verifyOTP.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
-        state.isAuthenticated = true;
+        state.isAuthenticated = !!action.payload.accessToken;
         state.requiresVerification = false;
         state.error = null;
       })
@@ -247,7 +237,6 @@ const authSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-        // Still clear auth data even if API call fails
         state.user = null;
         state.isAuthenticated = false;
         state.requiresVerification = false;

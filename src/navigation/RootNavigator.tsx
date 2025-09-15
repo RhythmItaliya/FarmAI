@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList, HomeStackParamList } from '@/types';
+import AuthGuard from '../components/AuthGuard';
 
 const LoginScreen = React.lazy(() => import('../screens/LoginScreen'));
 const RegisterScreen = React.lazy(() => import('../screens/RegisterScreen'));
@@ -22,29 +23,29 @@ const HomeStackNavigator = React.memo(() => (
   </Suspense>
 ));
 
-const RootNavigator = React.memo(() => (
-  <RootStack.Navigator initialRouteName="Login">
-    <RootStack.Screen
-      name="Login"
-      component={LoginScreen}
-      options={{ headerShown: false }}
-    />
-    <RootStack.Screen
-      name="Register"
-      component={RegisterScreen}
-      options={{ headerShown: false }}
-    />
-    <RootStack.Screen
-      name="OTPVerification"
-      component={OTPVerificationScreen}
-      options={{ headerShown: false }}
-    />
-    <RootStack.Screen
-      name="Home"
-      component={HomeStackNavigator}
-      options={{ headerShown: false }}
-    />
-  </RootStack.Navigator>
-));
+const HomeScreenWithGuard = () => (
+  <AuthGuard requireAuth={true}>
+    <HomeStackNavigator />
+  </AuthGuard>
+);
+
+const RootNavigator = React.memo(() => {
+  return (
+    <Suspense fallback={null}>
+      <RootStack.Navigator
+        initialRouteName="Login"
+        screenOptions={{ headerShown: false }}
+      >
+        <RootStack.Screen name="Login" component={LoginScreen} />
+        <RootStack.Screen name="Register" component={RegisterScreen} />
+        <RootStack.Screen
+          name="OTPVerification"
+          component={OTPVerificationScreen}
+        />
+        <RootStack.Screen name="Home" component={HomeScreenWithGuard} />
+      </RootStack.Navigator>
+    </Suspense>
+  );
+});
 
 export default RootNavigator;

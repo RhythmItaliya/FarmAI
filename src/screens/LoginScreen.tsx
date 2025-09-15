@@ -7,11 +7,12 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { useAppNavigation } from '../hooks/useAppNavigation';
 import { loginUser, clearError } from '../store/slices/authSlice';
 import { ErrorHandler } from '../utils/errorHandler';
+import { useToast } from '../components/Toast';
 import {
   COLORS,
   FONT_FAMILY,
@@ -23,49 +24,66 @@ import {
   BUTTON,
   CARD,
   RADIUS,
-  SHADOW,
-  WIDTH,
-  HEIGHT,
   TEXT_ALIGN,
   DISABLED,
 } from '../constants/globalStyle';
 
-interface LoginScreenProps {
-  navigation: any;
-}
-
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+const LoginScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const dispatch = useAppDispatch();
-  const { isLoading, error, isAuthenticated } = useAppSelector(
-    state => state.auth
-  );
+  const { showToast } = useToast();
+  const { isLoading, error, isAuthenticated, requiresVerification, user } =
+    useAppSelector(state => state.auth);
 
-  // Clear error when component mounts
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // Navigate to home when authenticated
+  // Handle navigation after successful login
   useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate('Home');
+    if (isAuthenticated && !requiresVerification) {
+      // User is logged in and verified - navigate to home
+      navigate('Home');
+    } else if (requiresVerification) {
+      // User needs verification - navigate to OTP screen
+      navigate('OTPVerification', {
+        email: user?.email,
+        username: user?.username,
+      });
     }
-  }, [isAuthenticated, navigation]);
+  }, [
+    isAuthenticated,
+    requiresVerification,
+    user?.email,
+    user?.username,
+    navigate,
+  ]);
 
-  // Show error alert when there's an error
+  // Prevent authenticated users from accessing login screen
+  useEffect(() => {
+    if (isAuthenticated && !requiresVerification) {
+      navigate('Home');
+    }
+  }, [isAuthenticated, requiresVerification, navigate]);
+
   useEffect(() => {
     if (error) {
-      ErrorHandler.showAlert({ message: error });
+      showToast(error, { type: 'error' });
       dispatch(clearError());
     }
-  }, [error, dispatch]);
+  }, [error, dispatch, showToast]);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      showToast('Please fill in all fields', { type: 'error' });
+      return;
+    }
+
+    if (email.trim().length === 0 || password.trim().length === 0) {
+      showToast('Please enter valid credentials', { type: 'error' });
       return;
     }
 
@@ -74,21 +92,27 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         loginUser({ usernameOrEmail: email, password })
       ).unwrap();
 
-      // If user requires verification, navigate to OTP screen
-      if (result.requiresVerification) {
-        navigation.navigate('OTPVerification', {
-          email: result.user.email,
-          username: result.user.username,
+      const needsVerification =
+        !!result?.requiresVerification ||
+        (result?.user && result.user.isActive === false);
+
+      if (needsVerification) {
+        showToast('Verification required. Check your email for OTP.', {
+          type: 'info',
         });
+        return;
+      }
+
+      if (result?.accessToken) {
+        showToast('Welcome back!', { type: 'success' });
       }
     } catch (error) {
-      // Error is handled by useEffect above
       ErrorHandler.logError(error, 'LoginScreen');
     }
   };
 
   const handleRegister = () => {
-    navigation.navigate('Register');
+    navigate('Register');
   };
 
   return (

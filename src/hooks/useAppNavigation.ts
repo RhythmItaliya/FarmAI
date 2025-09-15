@@ -52,13 +52,25 @@ export const useAppNavigation = () => {
     [navigation]
   );
 
+  /**
+   * Replace the current screen with a new screen.
+   * @param {string} name - The name of the screen to replace with.
+   * @param {object} [params] - Optional parameters to pass to the screen.
+   * @returns {void}
+   */
+  const replace = useCallback(
+    (name: string, params?: object) => navigation.replace(name, params),
+    [navigation]
+  );
+
   return useMemo(
     () => ({
       goBack,
       push,
       navigate,
-      navigation, // expose the full navigation object if needed
+      replace,
+      navigation,
     }),
-    [goBack, push, navigate, navigation]
+    [goBack, push, navigate, replace, navigation]
   );
 };

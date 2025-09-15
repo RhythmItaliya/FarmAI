@@ -7,11 +7,17 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import { verifyOTP, resendOTP, clearError } from '../store/slices/authSlice';
+import { useAppNavigation } from '../hooks/useAppNavigation';
+import {
+  verifyOTP,
+  resendOTP,
+  clearError,
+  clearAuth,
+} from '../store/slices/authSlice';
 import { ErrorHandler } from '../utils/errorHandler';
+import { useToast } from '../components/Toast';
 import {
   COLORS,
   FONT_FAMILY,
@@ -28,48 +34,46 @@ import {
 } from '../constants/globalStyle';
 
 interface OTPVerificationScreenProps {
-  navigation: any;
-  route: {
-    params: {
-      email: string;
-      username: string;
+  route?: {
+    params?: {
+      email?: string;
+      username?: string;
     };
   };
 }
 
 const OTPVerificationScreen: React.FC<OTPVerificationScreenProps> = ({
-  navigation,
   route,
 }) => {
+  const { navigate } = useAppNavigation();
   const [otp, setOtp] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
-  
+
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector(state => state.auth);
+  const { showToast } = useToast();
+  const { isLoading, error, user, isAuthenticated, requiresVerification } =
+    useAppSelector(state => state.auth);
 
-  const { email, username } = route.params;
+  const email = route?.params?.email || user?.email || '';
+  const username = route?.params?.username || user?.username || '';
 
-  // Clear error when component mounts
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // Show error alert when there's an error
   useEffect(() => {
     if (error) {
-      ErrorHandler.showAlert({ message: error });
+      showToast(error, { type: 'error' });
       dispatch(clearError());
     }
-  }, [error, dispatch]);
+  }, [error, dispatch, showToast]);
 
-  // Navigate to home when authenticated
   useEffect(() => {
-    if (user?.isActive) {
-      navigation.navigate('Home');
+    if (isAuthenticated && !requiresVerification) {
+      navigate('Home');
     }
-  }, [user?.isActive, navigation]);
+  }, [isAuthenticated, requiresVerification, navigate]);
 
-  // Resend timer
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
@@ -79,37 +83,54 @@ const OTPVerificationScreen: React.FC<OTPVerificationScreenProps> = ({
 
   const handleVerifyOTP = async () => {
     if (!otp || otp.length !== 6) {
-      Alert.alert('Error', 'Please enter a valid 6-digit OTP');
+      showToast('Please enter a valid 6-digit OTP', { type: 'error' });
+      return;
+    }
+
+    if (!email) {
+      showToast('Email not found. Please try logging in again.', {
+        type: 'error',
+      });
       return;
     }
 
     try {
-      await dispatch(verifyOTP({ email, otp })).unwrap();
-      Alert.alert('Success', 'Account verified successfully!');
+      const result = await dispatch(verifyOTP({ email, otp })).unwrap();
+      showToast('Account verified successfully!', { type: 'success' });
+      // Navigation will be handled by useEffect when isAuthenticated becomes true
     } catch (error) {
-      // Error is handled by useEffect above
       ErrorHandler.logError(error, 'OTPVerificationScreen');
     }
   };
 
   const handleResendOTP = async () => {
     if (resendTimer > 0) {
-      Alert.alert('Wait', `Please wait ${resendTimer} seconds before requesting a new OTP`);
+      showToast(
+        `Please wait ${resendTimer} seconds before requesting a new OTP`,
+        { type: 'info' }
+      );
+      return;
+    }
+
+    if (!email) {
+      showToast('Email not found. Please try logging in again.', {
+        type: 'error',
+      });
       return;
     }
 
     try {
       await dispatch(resendOTP(email)).unwrap();
-      setResendTimer(120); // 2 minutes timer
-      Alert.alert('Success', 'New OTP sent to your email');
+      setResendTimer(120);
+      showToast('New OTP sent to your email', { type: 'success' });
     } catch (error) {
-      // Error is handled by useEffect above
       ErrorHandler.logError(error, 'OTPVerificationScreen');
     }
   };
 
   const handleBackToLogin = () => {
-    navigation.navigate('Login');
+    dispatch(clearAuth());
+    navigate('Login');
   };
 
   return (
@@ -210,16 +231,15 @@ const OTPVerificationScreen: React.FC<OTPVerificationScreenProps> = ({
             onPress={handleResendOTP}
             disabled={resendTimer > 0}
           >
-            <Text style={[
-              TYPOGRAPHY.body,
-              { 
-                color: resendTimer > 0 ? COLORS.gray : COLORS.primary 
-              }
-            ]}>
-              {resendTimer > 0 
-                ? `Resend OTP in ${resendTimer}s` 
-                : 'Resend OTP'
-              }
+            <Text
+              style={[
+                TYPOGRAPHY.body,
+                {
+                  color: resendTimer > 0 ? COLORS.gray : COLORS.primary,
+                },
+              ]}
+            >
+              {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
             </Text>
           </TouchableOpacity>
         </View>

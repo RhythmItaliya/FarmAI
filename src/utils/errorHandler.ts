@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import { ApiError } from '../config/api';
+import { showGlobalToast } from '../components/Toast';
 
 // Error types
 export interface AppError {
@@ -87,8 +87,7 @@ export class ErrorHandler {
   }
 
   static showToast(error: AppError): void {
-    // You can implement toast notification here
-    console.warn('Error:', error.message);
+    showGlobalToast(error.message, { type: 'error' });
   }
 
   static logError(error: any, context?: string): void {

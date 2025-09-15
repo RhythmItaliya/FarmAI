@@ -7,11 +7,12 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { useAppNavigation } from '../hooks/useAppNavigation';
 import { registerUser, clearError } from '../store/slices/authSlice';
 import { ErrorHandler } from '../utils/errorHandler';
+import { useToast } from '../components/Toast';
 import {
   COLORS,
   FONT_FAMILY,
@@ -23,19 +24,12 @@ import {
   BUTTON,
   CARD,
   RADIUS,
-  SHADOW,
-  WIDTH,
-  HEIGHT,
   TEXT_ALIGN,
   DISABLED,
-  GAP,
 } from '../constants/globalStyle';
 
-interface RegisterScreenProps {
-  navigation: any;
-}
-
-const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
+const RegisterScreen: React.FC = () => {
+  const { navigate } = useAppNavigation();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -47,26 +41,18 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const { isLoading, error, isAuthenticated } = useAppSelector(
     state => state.auth
   );
+  const { showToast } = useToast();
 
-  // Clear error when component mounts
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // Navigate to home when authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate('Home');
-    }
-  }, [isAuthenticated, navigation]);
-
-  // Show error alert when there's an error
   useEffect(() => {
     if (error) {
-      ErrorHandler.showAlert({ message: error });
+      showToast(error, { type: 'error' });
       dispatch(clearError());
     }
-  }, [error, dispatch]);
+  }, [error, dispatch, showToast]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -76,39 +62,40 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
     const { username, email, password, confirmPassword } = formData;
 
     if (!username || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
+      showToast('Please fill in all fields', { type: 'error' });
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      showToast('Passwords do not match', { type: 'error' });
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
+      showToast('Password must be at least 6 characters long', {
+        type: 'error',
+      });
       return;
     }
 
     if (username.length < 3) {
-      Alert.alert('Error', 'Username must be at least 3 characters long');
+      showToast('Username must be at least 3 characters long', {
+        type: 'error',
+      });
       return;
     }
 
-    // Username validation (letters, numbers, underscores only)
     const usernameRegex = /^[a-zA-Z0-9_]+$/;
     if (!usernameRegex.test(username)) {
-      Alert.alert(
-        'Error',
-        'Username can only contain letters, numbers, and underscores'
-      );
+      showToast('Username can only contain letters, numbers, and underscores', {
+        type: 'error',
+      });
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      showToast('Please enter a valid email address', { type: 'error' });
       return;
     }
 
@@ -117,19 +104,20 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         registerUser({ username, email, password })
       ).unwrap();
 
-      // Navigate to OTP verification screen
-      navigation.navigate('OTPVerification', {
+      showToast('Registration successful! Check your email for OTP.', {
+        type: 'success',
+      });
+      navigate('OTPVerification', {
         email: result.user.email,
         username: result.user.username,
       });
     } catch (error) {
-      // Error is handled by useEffect above
       ErrorHandler.logError(error, 'RegisterScreen');
     }
   };
 
   const handleLogin = () => {
-    navigation.navigate('Login');
+    navigate('Login');
   };
 
   return (

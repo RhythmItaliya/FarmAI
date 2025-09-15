@@ -3,6 +3,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { initializeAuth } from '../store/slices/authSlice';
 import { COLORS, GLOBAL, TYPOGRAPHY } from '../constants/globalStyle';
+import { ToastProvider } from './Toast';
 
 interface AuthInitializerProps {
   children: React.ReactNode;
@@ -31,7 +32,7 @@ const AuthInitializer: React.FC<AuthInitializerProps> = ({ children }) => {
     );
   }
 
-  return <>{children}</>;
+  return <ToastProvider>{children}</ToastProvider>;
 };
 
 export default AuthInitializer;
