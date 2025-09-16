@@ -3,7 +3,14 @@ import { View, Text, Button } from 'react-native';
 import { useAppNavigation } from '../hooks/useAppNavigation';
 import { useAppDispatch } from '../hooks/redux';
 import { logoutUser } from '../store/slices/authSlice';
-import { GLOBAL, PADDING, TYPOGRAPHY } from '../constants/globalStyle';
+import {
+  GLOBAL,
+  TYPOGRAPHY,
+  COLORS,
+  CARD,
+  MARGIN,
+  GAP,
+} from '../constants/globalStyle';
 
 const HomeScreen = React.memo(() => {
   const { navigate } = useAppNavigation();
@@ -17,11 +24,27 @@ const HomeScreen = React.memo(() => {
     dispatch(logoutUser());
   }, [dispatch]);
 
+  const handleTestOnboarding = useCallback(() => {
+    navigate('Onboarding');
+  }, [navigate]);
+
   return (
-    <View style={[GLOBAL.flex, PADDING.md]}>
-      <Text style={TYPOGRAPHY.heading}>Home Screen</Text>
+    <View
+      style={[
+        GLOBAL.flex,
+        {
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: 20,
+        },
+      ]}
+    >
+      <Text style={[TYPOGRAPHY.heading, { marginBottom: 30 }]}>
+        Home Screen
+      </Text>
+
       <Button title="Go to Home Sub Screen" onPress={handleGoToSub} />
-      <View style={{ height: 12 }} />
+      <Button title="Test Onboarding Screen" onPress={handleTestOnboarding} />
       <Button title="Logout" onPress={handleLogout} />
     </View>
   );

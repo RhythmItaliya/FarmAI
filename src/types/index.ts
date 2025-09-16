@@ -5,6 +5,7 @@ export type RootStackParamList = {
     email: string;
     username: string;
   };
+  Onboarding: undefined;
   Home: undefined;
 };
 

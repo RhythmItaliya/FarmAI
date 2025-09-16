@@ -8,6 +8,9 @@ const RegisterScreen = React.lazy(() => import('../screens/RegisterScreen'));
 const OTPVerificationScreen = React.lazy(
   () => import('../screens/OTPVerificationScreen')
 );
+const OnboardingScreen = React.lazy(
+  () => import('../screens/OnboardingScreen')
+);
 const HomeScreen = React.lazy(() => import('../screens/HomeScreen'));
 const HomeSubScreen = React.lazy(() => import('../screens/home/HomeSubScreen'));
 
@@ -42,6 +45,7 @@ const RootNavigator = React.memo(() => {
           name="OTPVerification"
           component={OTPVerificationScreen}
         />
+        <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
         <RootStack.Screen name="Home" component={HomeScreenWithGuard} />
       </RootStack.Navigator>
     </Suspense>

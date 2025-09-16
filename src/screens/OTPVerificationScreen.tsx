@@ -70,7 +70,7 @@ const OTPVerificationScreen: React.FC<OTPVerificationScreenProps> = ({
 
   useEffect(() => {
     if (isAuthenticated && !requiresVerification) {
-      navigate('Home');
+      navigate('Onboarding');
     }
   }, [isAuthenticated, requiresVerification, navigate]);
 
@@ -97,7 +97,6 @@ const OTPVerificationScreen: React.FC<OTPVerificationScreenProps> = ({
     try {
       const result = await dispatch(verifyOTP({ email, otp })).unwrap();
       showToast('Account verified successfully!', { type: 'success' });
-      // Navigation will be handled by useEffect when isAuthenticated becomes true
     } catch (error) {
       ErrorHandler.logError(error, 'OTPVerificationScreen');
     }

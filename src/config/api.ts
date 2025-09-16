@@ -4,9 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // API Configuration
 export const API_CONFIG = {
   BASE_URL: __DEV__
-    ? 'http://10.0.2.2:8080' // Android emulator localhost (use your machine's IP for physical device)
-    : 'https://your-production-api.com', // Production server
-  TIMEOUT: 10000, // 10 seconds
+    ? 'http://10.0.2.2:8080'
+    : // ? 'http://10.214.129.56:8080'
+      'https://your-production-api.com',
+  TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 };
 

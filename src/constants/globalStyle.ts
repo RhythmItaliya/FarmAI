@@ -26,6 +26,7 @@ export const COLORS = {
   secondary: '#8BC34A', // Light Green (accent color)
   background: '#F1F8E9', // Light green-gray (clean, natural)
   surface: '#FFFFFF', // Card/modal backgrounds
+  white: '#FFFFFF', // Pure white
   text: '#1B5E20', // Dark green (readable)
   textSecondary: '#4CAF50', // Medium green
   error: '#D32F2F', // Red for errors

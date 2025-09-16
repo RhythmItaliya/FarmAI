@@ -139,7 +139,7 @@ const RegisterGlobal: React.FC<{
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 12,
+    top: 50,
     left: 0,
     right: 0,
     alignItems: 'center',
