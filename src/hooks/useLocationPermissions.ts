@@ -111,6 +111,18 @@ export const useLocationPermissions = () => {
             },
           ]
         );
+      } else if (result === RESULTS.UNAVAILABLE) {
+        Alert.alert(
+          'Location Unavailable',
+          'Location services are not available on this device. Please check your device settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Open Settings',
+              onPress: () => RNPermissions.openSettings(),
+            },
+          ]
+        );
       }
       return false;
     } catch (error) {
@@ -155,6 +167,18 @@ export const useLocationPermissions = () => {
         Alert.alert(
           'Background Location Blocked',
           'Background location permission has been blocked. Please enable it in Settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Open Settings',
+              onPress: () => RNPermissions.openSettings(),
+            },
+          ]
+        );
+      } else if (result === RESULTS.UNAVAILABLE) {
+        Alert.alert(
+          'Background Location Unavailable',
+          'Background location services are not available on this device. Please check your device settings.',
           [
             { text: 'Cancel', style: 'cancel' },
             {

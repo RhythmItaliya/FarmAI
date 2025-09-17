@@ -32,7 +32,26 @@ export const useLocation = () => {
       if (!permissionState.isLocationEnabled) {
         // Request permission using native mobile dialog
         const granted = await requestAllPermissions();
+        
+        // Only show popup if permission was actually denied/blocked
         if (!granted) {
+          // Show popup to go to settings if permission is still not granted
+          Alert.alert(
+            'Location Permission Required',
+            'FarmAI needs location access to provide accurate farming recommendations. Please enable location permission in Settings.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Go to Settings',
+                onPress: () => {
+                  // Import RNPermissions here to avoid circular dependency
+                  import('react-native-permissions').then(({ default: RNPermissions }) => {
+                    RNPermissions.openSettings();
+                  });
+                },
+              },
+            ]
+          );
           return null;
         }
       }
@@ -76,7 +95,26 @@ export const useLocation = () => {
     if (!permissionState.isLocationEnabled) {
       // Request permission using native mobile dialog
       const granted = await requestAllPermissions();
+      
+      // Only show popup if permission was actually denied/blocked
       if (!granted) {
+        // Show popup to go to settings if permission is still not granted
+        Alert.alert(
+          'Location Permission Required',
+          'FarmAI needs location access to monitor your farm location. Please enable location permission in Settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Go to Settings',
+              onPress: () => {
+                // Import RNPermissions here to avoid circular dependency
+                import('react-native-permissions').then(({ default: RNPermissions }) => {
+                  RNPermissions.openSettings();
+                });
+              },
+            },
+          ]
+        );
         return;
       }
     }
