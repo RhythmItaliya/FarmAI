@@ -12,8 +12,9 @@ import RootNavigator from './src/navigation/RootNavigator';
 import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { store, persistor } from './src/store';
+import { store, persistor } from './src/common/store';
 import AuthInitializer from './src/components/AuthInitializer';
+import GlobalLocationProvider from './src/components/GlobalLocationProvider';
 
 enableScreens();
 
@@ -23,9 +24,11 @@ const App = () => {
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
           <AuthInitializer>
-            <NavigationContainer>
-              <RootNavigator />
-            </NavigationContainer>
+            <GlobalLocationProvider>
+              <NavigationContainer>
+                <RootNavigator />
+              </NavigationContainer>
+            </GlobalLocationProvider>
           </AuthInitializer>
         </SafeAreaProvider>
       </PersistGate>

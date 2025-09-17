@@ -15,7 +15,7 @@ import {
   isMobile,
   responsiveSpacing,
   responsiveFontSize,
-} from '../utils/responsive';
+} from '@/common/utils/responsive';
 
 /**
  * COLORS palette for the project.
@@ -24,7 +24,7 @@ import {
 export const COLORS = {
   primary: '#2E7D32', // Forest Green (main brand color)
   secondary: '#8BC34A', // Light Green (accent color)
-  background: '#F1F8E9', // Light green-gray (clean, natural)
+  background: '#FFFFFF', // Pure white background for all screens
   surface: '#FFFFFF', // Card/modal backgrounds
   white: '#FFFFFF', // Pure white
   text: '#1B5E20', // Dark green (readable)

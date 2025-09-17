@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DEV_SERVERS = {
   LOCALHOST: 'http://localhost:8080',
-  IP_ADDRESS: 'http://10.214.129.18:8080',
+  IP_ADDRESS: 'http://10.214.129.12:8080',
 };
 
 const DEV_SERVER = DEV_SERVERS.IP_ADDRESS;

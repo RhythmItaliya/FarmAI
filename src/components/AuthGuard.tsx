@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useAppSelector } from '../hooks/redux';
-import { useAppNavigation } from '../hooks/useAppNavigation';
+import { useAppSelector } from '@/hooks/redux';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 interface AuthGuardProps {
   children: React.ReactNode;

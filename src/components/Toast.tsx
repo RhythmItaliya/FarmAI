@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
-import { COLORS, FONT_FAMILY, RADIUS, SHADOW } from '../constants/globalStyle';
+import { COLORS, FONT_FAMILY, RADIUS, SHADOW } from '@/constants/globalStyle';
 
 type ToastType = 'success' | 'error' | 'info';
 

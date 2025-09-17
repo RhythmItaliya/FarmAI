@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, Button } from 'react-native';
-import { TYPOGRAPHY, PADDING, GLOBAL } from '../../constants/globalStyle';
-import { useAppNavigation } from '../../hooks/useAppNavigation';
+import { TYPOGRAPHY, PADDING, GLOBAL } from '@/constants/globalStyle';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 const HomeSubScreen = React.memo(() => {
   const { goBack } = useAppNavigation();

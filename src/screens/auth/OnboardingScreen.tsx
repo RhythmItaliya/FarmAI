@@ -7,8 +7,9 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { useAppNavigation } from '../hooks/useAppNavigation';
-import { useToast } from '../components/Toast';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { useToast } from '@/components/Toast';
 import {
   COLORS,
   GLOBAL,
@@ -25,7 +26,7 @@ import {
   BORDER,
   SHADOW,
   GAP,
-} from '../constants/globalStyle';
+} from '@/constants/globalStyle';
 
 const { width, height } = Dimensions.get('window');
 
@@ -234,7 +235,7 @@ const OnboardingScreen: React.FC = () => {
             { borderRadius: 150 },
             { overflow: 'hidden' },
             MARGIN.bottom(20),
-            { backgroundColor: '#E8F5E8' },
+            { backgroundColor: COLORS.lightGray },
             GLOBAL.alignCenter,
             GLOBAL.justifyCenter,
           ]}
@@ -308,17 +309,13 @@ const OnboardingScreen: React.FC = () => {
             style={[
               { width: 60, height: 60 },
               { borderRadius: 30 },
-              { backgroundColor: '#4CAF50' },
+              { backgroundColor: COLORS.primary },
               GLOBAL.alignCenter,
               GLOBAL.justifyCenter,
               MARGIN.bottom(10),
             ]}
           >
-            <Text
-              style={[TYPOGRAPHY.custom({ fontSize: 24, color: COLORS.white })]}
-            >
-              🌱
-            </Text>
+            <Icon name="eco" size={24} color={COLORS.white} />
           </View>
         </View>
 

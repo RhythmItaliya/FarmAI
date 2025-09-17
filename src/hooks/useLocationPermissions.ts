@@ -87,50 +87,12 @@ export const useLocationPermissions = () => {
           }
         }
         return true;
-      } else if (result === RESULTS.DENIED) {
-        Alert.alert(
-          'Permission Denied',
-          'Location permission is required for FarmAI to provide accurate farming recommendations. You can enable it in Settings.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => RNPermissions.openSettings(),
-            },
-          ]
-        );
-      } else if (result === RESULTS.BLOCKED) {
-        Alert.alert(
-          'Permission Blocked',
-          'Location permission has been blocked. Please enable it in Settings to use FarmAI features.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => RNPermissions.openSettings(),
-            },
-          ]
-        );
-      } else if (result === RESULTS.UNAVAILABLE) {
-        Alert.alert(
-          'Location Unavailable',
-          'Location services are not available on this device. Please check your device settings.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => RNPermissions.openSettings(),
-            },
-          ]
-        );
       }
+
+      // No alerts or settings redirects - just return false
       return false;
     } catch (error) {
       console.error('Error requesting fine location permission:', error);
-      Alert.alert(
-        'Error',
-        'Failed to request location permission. Please try again.'
-      );
       return false;
     }
   }, []);
@@ -151,50 +113,12 @@ export const useLocationPermissions = () => {
 
       if (result === RESULTS.GRANTED) {
         return true;
-      } else if (result === RESULTS.DENIED) {
-        Alert.alert(
-          'Background Location Required',
-          'Background location access is needed for continuous farm monitoring. You can enable it in Settings.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => RNPermissions.openSettings(),
-            },
-          ]
-        );
-      } else if (result === RESULTS.BLOCKED) {
-        Alert.alert(
-          'Background Location Blocked',
-          'Background location permission has been blocked. Please enable it in Settings.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => RNPermissions.openSettings(),
-            },
-          ]
-        );
-      } else if (result === RESULTS.UNAVAILABLE) {
-        Alert.alert(
-          'Background Location Unavailable',
-          'Background location services are not available on this device. Please check your device settings.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => RNPermissions.openSettings(),
-            },
-          ]
-        );
       }
+
+      // No alerts or settings redirects - just return false
       return false;
     } catch (error) {
       console.error('Error requesting background location permission:', error);
-      Alert.alert(
-        'Error',
-        'Failed to request background location permission. Please try again.'
-      );
       return false;
     }
   }, []);
@@ -212,7 +136,6 @@ export const useLocationPermissions = () => {
   const openSettings = useCallback(() => {
     RNPermissions.openSettings();
   }, []);
-
 
   // Check if we need to request background location
   const shouldRequestBackgroundLocation = useCallback((): boolean => {

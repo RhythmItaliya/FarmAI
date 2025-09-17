@@ -8,11 +8,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import { useAppNavigation } from '../hooks/useAppNavigation';
-import { loginUser, clearError } from '../store/slices/authSlice';
-import { ErrorHandler } from '../utils/errorHandler';
-import { useToast } from '../components/Toast';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { loginUser, clearError } from '@/common/store/slices/authSlice';
+import { ErrorHandler } from '@/common/utils/errorHandler';
+import { useToast } from '@/components/Toast';
 import {
   COLORS,
   FONT_FAMILY,
@@ -26,7 +26,7 @@ import {
   RADIUS,
   TEXT_ALIGN,
   DISABLED,
-} from '../constants/globalStyle';
+} from '@/constants/globalStyle';
 
 const LoginScreen: React.FC = () => {
   const { navigate } = useAppNavigation();

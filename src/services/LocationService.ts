@@ -144,17 +144,7 @@ class LocationService {
       // Check if location services are enabled
       const servicesEnabled = await this.checkLocationServices();
       if (!servicesEnabled) {
-        Alert.alert(
-          'Location Services Disabled',
-          'Please enable location services in your device settings to use FarmAI features.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => Geolocation.requestAuthorization('whenInUse'),
-            },
-          ]
-        );
+        // Location services disabled - return null without showing popup
         return null;
       }
 

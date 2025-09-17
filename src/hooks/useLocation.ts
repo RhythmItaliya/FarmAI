@@ -32,19 +32,19 @@ export const useLocation = () => {
       if (!permissionState.isLocationEnabled) {
         // Request permission using native mobile dialog
         const granted = await requestAllPermissions();
-        
+
         // Only show popup if permission was actually denied/blocked
         // The requestAllPermissions function already handles showing alerts for denied/blocked states
         if (!granted) {
           return null;
         }
-        
+
         // Refresh permission state after request to ensure it's updated
         await checkPermissions();
-        
+
         // Wait a bit more for state to be fully updated
         await new Promise(resolve => setTimeout(resolve, 200));
-        
+
         // Check again if permission is now enabled
         if (!permissionState.isLocationEnabled) {
           return null;
@@ -90,19 +90,19 @@ export const useLocation = () => {
     if (!permissionState.isLocationEnabled) {
       // Request permission using native mobile dialog
       const granted = await requestAllPermissions();
-      
+
       // Only show popup if permission was actually denied/blocked
       // The requestAllPermissions function already handles showing alerts for denied/blocked states
       if (!granted) {
         return;
       }
-      
+
       // Refresh permission state after request to ensure it's updated
       await checkPermissions();
-      
+
       // Wait a bit more for state to be fully updated
       await new Promise(resolve => setTimeout(resolve, 200));
-      
+
       // Check again if permission is now enabled
       if (!permissionState.isLocationEnabled) {
         return;
@@ -203,7 +203,7 @@ export const useLocation = () => {
     };
   }, []);
 
-    return {
+  return {
     locationState,
     getCurrentLocation,
     startWatchingLocation,

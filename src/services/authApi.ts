@@ -1,9 +1,4 @@
-import {
-  apiCall,
-  setAuthData,
-  setUserData,
-  clearAuthData,
-} from '../config/api';
+import { apiCall, setAuthData, setUserData, clearAuthData } from '@/config/api';
 
 // Auth API types (exactly matching server responses)
 export interface LoginRequest {

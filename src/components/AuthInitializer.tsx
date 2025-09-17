@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import { initializeAuth } from '../store/slices/authSlice';
-import { COLORS, GLOBAL, TYPOGRAPHY } from '../constants/globalStyle';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { initializeAuth } from '@/common/store/slices/authSlice';
+import { COLORS, GLOBAL, TYPOGRAPHY } from '@/constants/globalStyle';
 import { ToastProvider } from './Toast';
 
 interface AuthInitializerProps {

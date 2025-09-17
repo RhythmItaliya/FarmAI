@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import { showGlobalToast } from '../components/Toast';
+import { showGlobalToast } from '@/components/Toast';
 
 // Error types
 export interface AppError {

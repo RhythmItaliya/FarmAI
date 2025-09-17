@@ -8,16 +8,16 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import { useAppNavigation } from '../hooks/useAppNavigation';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 import {
   verifyOTP,
   resendOTP,
   clearError,
   clearAuth,
-} from '../store/slices/authSlice';
-import { ErrorHandler } from '../utils/errorHandler';
-import { useToast } from '../components/Toast';
+} from '@/common/store/slices/authSlice';
+import { ErrorHandler } from '@/common/utils/errorHandler';
+import { useToast } from '@/components/Toast';
 import {
   COLORS,
   FONT_FAMILY,
@@ -31,7 +31,7 @@ import {
   RADIUS,
   TEXT_ALIGN,
   DISABLED,
-} from '../constants/globalStyle';
+} from '@/constants/globalStyle';
 
 interface OTPVerificationScreenProps {
   route?: {

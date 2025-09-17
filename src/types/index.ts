@@ -7,6 +7,7 @@ export type RootStackParamList = {
   };
   Onboarding: undefined;
   Home: undefined;
+  Profile: undefined;
 };
 
 export type HomeStackParamList = {
