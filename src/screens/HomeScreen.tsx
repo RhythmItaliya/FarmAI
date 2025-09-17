@@ -33,27 +33,15 @@ const HomeScreen = React.memo(() => {
   const handleRequestLocationPermission = useCallback(async () => {
     const granted = await requestAllPermissions();
     
-    // Only show popup if permission was actually denied/blocked
-    if (!granted) {
-      // Show popup to go to settings if permission is still not granted
-      Alert.alert(
-        'Location Permission Required',
-        'FarmAI needs location access to provide accurate farming recommendations. Please enable location permission in Settings.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Go to Settings',
-            onPress: () => {
-              // Import RNPermissions here to avoid circular dependency
-              import('react-native-permissions').then(({ default: RNPermissions }) => {
-                RNPermissions.openSettings();
-              });
-            },
-          },
-        ]
-      );
+    // The requestAllPermissions function already handles showing alerts for denied/blocked states
+    // So we don't need to show additional popups here
+    if (granted) {
+      // Permission was granted, wait a bit for state to update then get location
+      setTimeout(() => {
+        getCurrentLocation();
+      }, 300);
     }
-  }, [requestAllPermissions]);
+  }, [requestAllPermissions, getCurrentLocation]);
 
   // Auto-get location when permissions are granted
   useEffect(() => {

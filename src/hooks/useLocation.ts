@@ -23,7 +23,7 @@ export const useLocation = () => {
     isWatching: false,
   });
 
-  const { permissionState, requestAllPermissions } =
+  const { permissionState, requestAllPermissions, checkPermissions } =
     useLocationPermissions();
 
   // Get current location with permission check
@@ -34,24 +34,19 @@ export const useLocation = () => {
         const granted = await requestAllPermissions();
         
         // Only show popup if permission was actually denied/blocked
+        // The requestAllPermissions function already handles showing alerts for denied/blocked states
         if (!granted) {
-          // Show popup to go to settings if permission is still not granted
-          Alert.alert(
-            'Location Permission Required',
-            'FarmAI needs location access to provide accurate farming recommendations. Please enable location permission in Settings.',
-            [
-              { text: 'Cancel', style: 'cancel' },
-              {
-                text: 'Go to Settings',
-                onPress: () => {
-                  // Import RNPermissions here to avoid circular dependency
-                  import('react-native-permissions').then(({ default: RNPermissions }) => {
-                    RNPermissions.openSettings();
-                  });
-                },
-              },
-            ]
-          );
+          return null;
+        }
+        
+        // Refresh permission state after request to ensure it's updated
+        await checkPermissions();
+        
+        // Wait a bit more for state to be fully updated
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Check again if permission is now enabled
+        if (!permissionState.isLocationEnabled) {
           return null;
         }
       }
@@ -97,24 +92,19 @@ export const useLocation = () => {
       const granted = await requestAllPermissions();
       
       // Only show popup if permission was actually denied/blocked
+      // The requestAllPermissions function already handles showing alerts for denied/blocked states
       if (!granted) {
-        // Show popup to go to settings if permission is still not granted
-        Alert.alert(
-          'Location Permission Required',
-          'FarmAI needs location access to monitor your farm location. Please enable location permission in Settings.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Go to Settings',
-              onPress: () => {
-                // Import RNPermissions here to avoid circular dependency
-                import('react-native-permissions').then(({ default: RNPermissions }) => {
-                  RNPermissions.openSettings();
-                });
-              },
-            },
-          ]
-        );
+        return;
+      }
+      
+      // Refresh permission state after request to ensure it's updated
+      await checkPermissions();
+      
+      // Wait a bit more for state to be fully updated
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Check again if permission is now enabled
+      if (!permissionState.isLocationEnabled) {
         return;
       }
     }
