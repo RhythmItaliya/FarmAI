@@ -1,12 +1,15 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// API Configuration
+const DEV_SERVERS = {
+  LOCALHOST: 'http://localhost:8080',
+  IP_ADDRESS: 'http://10.214.129.18:8080',
+};
+
+const DEV_SERVER = DEV_SERVERS.IP_ADDRESS;
+
 export const API_CONFIG = {
-  BASE_URL: __DEV__
-    ? 'http://10.0.2.2:8080'
-    : // ? 'http://10.214.129.56:8080'
-      'https://your-production-api.com',
+  BASE_URL: __DEV__ ? DEV_SERVER : 'https://your-production-api.com', // Production URL
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 };
